@@ -3,6 +3,15 @@ Oshinko Console Ansible Playbook
 
 Playbook will install oshinko console extension to server
 
+
+## ScreenShots
+
+On the left sidebar you will see a menu option for spark and you can create a cluster:
+![alt tag](https://raw.githubusercontent.com/zmhassna/oshinko-spark-ansible/master/images/Oshinko-Ansible-1.png)
+
+On the overview page you should see your cluster created and running.
+![alt tag](https://raw.githubusercontent.com/zmhassan/oshinko-spark-ansible/master/images/Oshinko-Ansible-2.png)
+
 Requirements
 ------------
 
