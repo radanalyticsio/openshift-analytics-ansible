@@ -1,0 +1,48 @@
+---
+# tasks file for openshift-origin
+- name: install  docker
+  yum: name=docker state=latest
+
+
+
+- name: stat /tmp/openshift-cli.tar.gz
+  stat: path=/tmp/openshift-cli.tar.gz
+  register: openshift_binary_stat
+
+- name: Downloading file tarball
+  get_url: url=https://github.com/openshift/origin/releases/download/v1.4.0-rc1/openshift-origin-server-v1.4.0-rc1.b4e0954-linux-64bit.tar.gz  dest=/tmp/openshift-cli.tar.gz
+  when: openshift_binary_stat.stat.exists == False
+
+- name: make dir
+  command: mkdir -p /usr/local/openshift/cli
+
+- name: uncompress file tarball and place in /usr/local/openshift/cli
+  command: tar xzvf /tmp/openshift-cli.tar.gz -C /usr/local/openshift/cli --strip-components=1
+
+# - name: adding cli to PATH env
+#   command: export PATH=$PATH:/usr/local/openshift/cli
+
+- name:  docker
+  sudo: yes
+  service: name=docker state=started
+- name:  docker
+  sudo: yes
+  service: name=docker state=stopped
+
+# - name: change permission /etc/sysconfig/docker
+#   command: sudo chown vagrant /etc/sysconfig/docker
+#
+# - name: make changes to INSECURE_REGISTRY env variable in /etc/sysconfig/docker
+#   command: echo  "INSECURE_REGISTRY='--insecure-registry 172.30.0.0/16'" >> /etc/sysconfig/docker
+
+- name: changes to INSECURE_REGISTRY env variable
+  lineinfile: dest=/etc/sysconfig/docker regexp="\# INSECURE_REGISTRY=" line="INSECURE_REGISTRY='--insecure-registry 172.30.0.0/16'"
+
+
+
+# - name: change permissions back to root /etc/sysconfig/docker
+#   command: sudo chown root /etc/sysconfig/docker
+
+- name:  docker
+  sudo: yes
+  service: name=docker state=started

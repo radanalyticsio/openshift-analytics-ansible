@@ -1,0 +1,33 @@
+---
+# tasks file for openshift-spark
+- name: install  unzip
+  yum: name=unzip state=latest
+
+- name: stat /tmp/oshinko.zip
+  stat: path=/tmp/oshinko.zip
+  register: oshinko_binary_stat
+
+- name: Downloading file tarball
+  get_url: url=https://github.com/zmhassan/oshinko-console/files/720162/oshinko.zip  dest=/tmp/oshinko.zip
+  when: oshinko_binary_stat.stat.exists == False
+
+- name: creating config dir
+
+  command: /usr/local/openshift/cli/oc cluster up --host-config-dir=/home/oshinko --public-hostname=192.168.33.10 --version=v1.4.0-alpha.1
+
+- name: creating config dir
+
+  command: /usr/local/openshift/cli/oc cluster down
+
+# - name: creating config dir
+#   command: sudo unzip /tmp/oshinko-console.zip -d /home/oshinko/master/
+
+- unarchive:
+    src: /tmp/oshinko.zip
+    dest: /home/oshinko/master/
+
+- name: copy hdfs_rsa key
+  copy: src=master-config.yaml dest=/home/oshinko/master/master-config.yaml
+
+- name: creating config dir
+  command: /usr/local/openshift/cli/oc cluster up --host-config-dir=/home/oshinko --public-hostname=192.168.33.10 --version=v1.4.0-alpha.1  --use-existing-config=true
