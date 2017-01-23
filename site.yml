@@ -1,0 +1,16 @@
+---
+# Author: Zak Hassan
+# Usage: ansible-playbook site.yml or make install
+#
+#
+# Description: Playbook created to demonstrate provisioning cloud environment in like less than 1 min. :)
+#
+
+
+ - name: Configure OpenShift and Spark Extension
+   sudo: True
+   hosts:
+     - openshift-all-in-one
+   roles:
+     - { role: openshift-origin }
+     - { role: openshift-spark }
