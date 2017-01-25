@@ -7,27 +7,60 @@
   stat: path=/tmp/oshinko.zip
   register: oshinko_binary_stat
 
+- name: stat {{ master_config_dir }}/oshinko.css
+  stat: path=/{{ master_config_dir }}/oshinko.css
+  register: unarchive_oshinko
+
+- name:  origin-master
+  sudo: yes
+  service: name=origin-master  state=stopped
+
+# The next three steps are only necessary for vagrant all in one vm. But if preforming deployment on already deployed cluster just
+# omit the vagrant_ose_spark variable and you are going to be okay.
+- name: creating config dir
+  command: /usr/local/openshift/cli/oc cluster up --host-config-dir=/home/oshinko --public-hostname=192.168.33.10 --version=v1.4.0-alpha.1
+  when: vagrant_ose_spark is defined
+- name: creating config dir
+  command: /usr/local/openshift/cli/oc cluster down
+  when: vagrant_ose_spark is defined
+- name: copy copy vagrant master-config key
+  copy: src=master-config.yaml dest=/home/oshinko/master/master-config.yaml
+  when: vagrant_ose_spark is defined
+
+
+
 - name: Downloading file tarball
   get_url: url=https://github.com/zmhassan/oshinko-console/files/720162/oshinko.zip  dest=/tmp/oshinko.zip
   when: oshinko_binary_stat.stat.exists == False
 
-- name: creating config dir
-
-  command: /usr/local/openshift/cli/oc cluster up --host-config-dir=/home/oshinko --public-hostname=192.168.33.10 --version=v1.4.0-alpha.1
 
 - name: creating config dir
+  command: sudo unzip /tmp/oshinko.zip -d {{ master_config_dir }}
+  when: unarchive_oshinko.stat.exists == False
 
-  command: /usr/local/openshift/cli/oc cluster down
 
-# - name: creating config dir
-#   command: sudo unzip /tmp/oshinko-console.zip -d /home/oshinko/master/
+- name: insert/update HTML surrounded by custom markers after <body> line
+  blockinfile:
+    dest: /{{ master_config_dir }}/master-config.yaml
+    insertafter: "assetConfig:"
+    content: "
+          \n  extensionDevelopment: true
+          \n  extensionProperties: null
+          \n  extensionScripts:
+          \n  - scripts.js
+          \n  - templates.js
+          \n  extensionStylesheets:
+          \n  - oshinko.css
+      "
+- name:  origin-master
+  sudo: yes
+  service: name=origin-master state=started
 
-- unarchive:
-    src: /tmp/oshinko.zip
-    dest: /home/oshinko/master/
 
-- name: copy hdfs_rsa key
-  copy: src=master-config.yaml dest=/home/oshinko/master/master-config.yaml
 
-- name: creating config dir
-  command: /usr/local/openshift/cli/oc cluster up --host-config-dir=/home/oshinko --public-hostname=192.168.33.10 --version=v1.4.0-alpha.1  --use-existing-config=true
+
+
+
+# - name: copy copy vagrant master-config key
+#   copy: src=master-config.yaml dest=/home/oshinko/master/master-config.yaml
+#   when: vagrant_ose_spark is defined

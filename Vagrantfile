@@ -8,12 +8,12 @@ Vagrant.configure("2") do |config|
 
    config.vm.define "openshiftsparkvm" do |openshiftsparkvm|
      openshiftsparkvm.vm.hostname = "analytics.openshift.com"
-     openshiftsparkvm.vm.box = "bento/centos-7.1"
+     openshiftsparkvm.vm.box = "centos/7" #"bento/centos-7.1"
      openshiftsparkvm.vm.network "private_network", ip: "192.168.33.10"
          openshiftsparkvm.vm.provider "virtualbox" do |v|
            v.name = "openshiftspark"
            v.cpus = "1"
-           v.memory = "2048"
+           v.memory = "4096"
      end
 
        # copy private key so hosts can ssh using key authentication (the script below sets permissions to 600)

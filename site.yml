@@ -12,5 +12,5 @@
    hosts:
      - openshift-all-in-one
    roles:
-     - { role: openshift-origin }
+#     - { role: openshift-origin }
      - { role: openshift-spark }

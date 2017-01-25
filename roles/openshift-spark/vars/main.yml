@@ -1,2 +1,4 @@
 ---
 # vars file for openshift-spark
+#master_config_dir=/home/oshinko/master/
+master_config_dir: /etc/origin/master
