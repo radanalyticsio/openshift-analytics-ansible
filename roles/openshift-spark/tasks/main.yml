@@ -7,8 +7,8 @@
   stat: path=/tmp/oshinko.zip
   register: oshinko_binary_stat
 
-- name: stat {{ master_config_dir }}/oshinko.css
-  stat: path=/{{ master_config_dir }}/oshinko.css
+- name: stat {{ master_config_dir }}/oshinko-release/oshinko.css
+  stat: path=/{{ master_config_dir }}/oshinko-release/oshinko.css
   register: unarchive_oshinko
 
 - name:  origin-master
@@ -30,7 +30,7 @@
 
 
 - name: Downloading file tarball
-  get_url: url=https://github.com/zmhassan/oshinko-console/files/720162/oshinko.zip  dest=/tmp/oshinko.zip
+  get_url: url=https://github.com/radanalyticsio/oshinko-console/releases/download/v0.0.2/oshinko_0.0.2.zip  dest=/tmp/oshinko.zip
   when: oshinko_binary_stat.stat.exists == False
 
 
@@ -47,10 +47,10 @@
           \n  extensionDevelopment: true
           \n  extensionProperties: null
           \n  extensionScripts:
-          \n  - scripts.js
-          \n  - templates.js
+          \n  - oshinko-release/scripts.js
+          \n  - oshinko-release/templates.js
           \n  extensionStylesheets:
-          \n  - oshinko.css
+          \n  - oshinko-release/oshinko.css
       "
 - name:  origin-master
   sudo: yes
